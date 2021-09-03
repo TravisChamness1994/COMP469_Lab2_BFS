@@ -33,7 +33,13 @@ def positionInitialization(bfsmap):
 
 def bfsMazeSolution(bfsmap):
     start, goal = positionInitialization(bfsmap)
-    print("start, goal: {} {}".format(start, goal))
+    print("start, goal: {}, {}".format(start, goal))
+    pathCount = 1
+    fringe = [[start]]
+    print("fringe: {}".format(fringe))
+    goalfound = False
+    paths = [[]]
+
 
 
 
