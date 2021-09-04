@@ -26,22 +26,43 @@ def successorFunc(location, fringe, bfsMap):
     branchList = []
     #check up
     copyLocation = location.copy()
-    copyLocation[ROW] = copyLocation[ROW] - 1
-    if bfsMap[copyLocation[ROW]][(copyLocation[COL])] != 1:
-        while bfsMap[copyLocation[ROW]][copyLocation[COL]] != 1:
+    if bfsMap[copyLocation[ROW] - 1][(copyLocation[COL])] != 1:
+        copyLocation[ROW] = copyLocation[ROW] - 1
+        while bfsMap[copyLocation[ROW] - 1][copyLocation[COL]] != 1:
             copyLocation[ROW] = copyLocation[ROW] - 1
         branchList.append((location[ROW],  copyLocation[COL]))
     #check down
     copyLocation = location.copy()
-    copyLocation[ROW] += 1
-    if bfsMap[copyLocation[ROW]][copyLocation[COL]] != 1:
+    if bfsMap[copyLocation[ROW] + 1][copyLocation[COL]] != 1:
         print("found free space going down!")
-        while bfsMap[copyLocation[ROW]][copyLocation[COL]] != 1:
+        copyLocation[ROW] += 1
+        while bfsMap[copyLocation[ROW] + 1][copyLocation[COL]] != 1:
             copyLocation[ROW] = copyLocation[ROW] + 1
-        branchList.append((copyLocation[ROW] - 1, copyLocation[COL]))
+        branchList.append([copyLocation[ROW], copyLocation[COL]])
         print(branchList)
+    #check right
+    copyLocation = location.copy()
+    if bfsMap[copyLocation[ROW]][copyLocation[COL] + 1] != 1:
+        copyLocation[COL] += 1
+        while bfsMap[copyLocation[ROW]][copyLocation[COL] + 1] != 1:
+            copyLocation[COL] += 1
+        branchList.append([copyLocation[ROW],copyLocation[COL]])
+        print(branchList)
+    #check left
+    copyLocation = location.copy()
+    if bfsMap[copyLocation[ROW]][copyLocation[COL] - 1] != 1:
+        copyLocation[COL] = copyLocation[COL] - 1
+        while bfsMap[copyLocation[ROW]][copyLocation[COL] - 1] != 1:
+            copyLocation[COL] = copyLocation[COL] - 1
+        branchList.append([copyLocation[ROW], copyLocation[COL]])
+        print(branchList)
+    #add new branch list to fringe
+    if branchList:
+        fringe.append(branchList)
+    #return new fringe
+    return fringe
 
-
+#Initializes the start location and goal location values
 def positionInitialization(bfsmap):
     start = [0,0]
     goal = [0,0]
@@ -64,9 +85,8 @@ def buildSolutions(start, goal, fringe, pathCount, paths):
 def bfsMazeSolution(bfsmap):
     start, goal = positionInitialization(bfsmap)
     print("start, goal: {}, {}".format(start, goal))
-    pathCount = 1
     fringe = [[start]]
-    # print("fringe: {}".format(fringe))
+    pathCount = 1
     paths = [[]]
     successorFunc(start, fringe, bfsmap)
 
