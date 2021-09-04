@@ -14,16 +14,32 @@
 #
 # readFile("Map2.txt")
 
+
 # Cartesian coordinate X and Y (X, Y) accessed from array
 X = 0
 Y = 1
+COORD_MANIPULATOR_INIT = 1
 
+#Incomplete Function
+#Determines successor movements for the agent
 def successorFunc(location, fringe, bfsMap):
+    coordManipulator = COORD_MANIPULATOR_INIT
+    branchList = []
     #check up - Negative Y direction: should never be out of bounds of the map, as long as the map is configured correctly
-    print(bfsMap[location[X]][location[Y]])
-    if bfsMap[location[X]][(location[Y] - 1)] == 1:
-        print("found the wall!")
+    if bfsMap[location[X]][(location[Y] - 1)] != 1:
+        print("found free space going up!")
+        while bfsMap[location[X], location[Y] - COORD_MANIPULATOR_INIT] != 1:
+            coordManipulator = coordManipulator - 1
+        branchList.append((location[X], location[coordManipulator + 1]))
     #check down
+    coordManipulator = COORD_MANIPULATOR_INIT
+    if bfsMap[location[X]][location[Y] + coordManipulator]:
+        print("found free space going down!")
+        while bfsMap[location[X]][location[Y] + coordManipulator] != 1:
+            coordManipulator += 1
+        print("Move down to ({}, {})".format(location[X], location[coordManipulator - 1]))
+        branchList.append((location[X],location[coordManipulator - 1]))
+        print(branchList)
 
 #Note about row and col: row is the Y coordinate, and col is our X. It looks funny flipping order
 #   going from accessor use in bfsMap[row][col] to cartesian assignment with (col, row), but it is correct
