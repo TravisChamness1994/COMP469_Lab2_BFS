@@ -22,40 +22,40 @@ ROW = 0
 
 #Incomplete Function
 #Determines successor movements for the agent
-def successorFunc(location, fringe, bfsMap):
+def successorFunc(location, fringe, bfsMap, paths, path):
     branchList = []
     #check up
+    print("Location: ", location)
     copyLocation = location.copy()
     if bfsMap[copyLocation[ROW] - 1][(copyLocation[COL])] != 1:
         copyLocation[ROW] = copyLocation[ROW] - 1
         while bfsMap[copyLocation[ROW] - 1][copyLocation[COL]] != 1:
             copyLocation[ROW] = copyLocation[ROW] - 1
-        branchList.append((location[ROW],  copyLocation[COL]))
-    #check down
+        if [copyLocation[ROW], copyLocation[COL]] not in paths[path]:
+            branchList.append([copyLocation[ROW], copyLocation[COL]])    #check down
     copyLocation = location.copy()
     if bfsMap[copyLocation[ROW] + 1][copyLocation[COL]] != 1:
-        print("found free space going down!")
         copyLocation[ROW] += 1
         while bfsMap[copyLocation[ROW] + 1][copyLocation[COL]] != 1:
             copyLocation[ROW] = copyLocation[ROW] + 1
-        branchList.append([copyLocation[ROW], copyLocation[COL]])
-        print(branchList)
+        if [copyLocation[ROW], copyLocation[COL]] not in paths[path]:
+            branchList.append([copyLocation[ROW], copyLocation[COL]])
     #check right
     copyLocation = location.copy()
     if bfsMap[copyLocation[ROW]][copyLocation[COL] + 1] != 1:
         copyLocation[COL] += 1
         while bfsMap[copyLocation[ROW]][copyLocation[COL] + 1] != 1:
             copyLocation[COL] += 1
-        branchList.append([copyLocation[ROW],copyLocation[COL]])
-        print(branchList)
+        if [copyLocation[ROW], copyLocation[COL]] not in paths[path]:
+            branchList.append([copyLocation[ROW], copyLocation[COL]])
     #check left
     copyLocation = location.copy()
     if bfsMap[copyLocation[ROW]][copyLocation[COL] - 1] != 1:
         copyLocation[COL] = copyLocation[COL] - 1
         while bfsMap[copyLocation[ROW]][copyLocation[COL] - 1] != 1:
             copyLocation[COL] = copyLocation[COL] - 1
-        branchList.append([copyLocation[ROW], copyLocation[COL]])
-        print(branchList)
+        if [copyLocation[ROW], copyLocation[COL]] not in paths[path]:
+            branchList.append([copyLocation[ROW], copyLocation[COL]])
     #add new branch list to fringe
     if branchList:
         fringe.append(branchList)
@@ -76,10 +76,31 @@ def positionInitialization(bfsmap):
     return start, goal
 
 
-def buildSolutions(start, goal, fringe, pathCount, paths):
+def buildSolutions(start, goal, fringe, pathCount, paths, bfsMap):
     goalFound = False
-    # while(not goalFound and fringe):
-        # for path in range(pathCount):
+    # print("FRINGE: ", fringe)
+    iter = 1
+    while(not goalFound and fringe):
+        print("ITERATION ", iter)
+        pathCount = len(paths)
+        print("FRINGE at first loop",fringe)
+        print("Pathcount {} Paths {}".format(len(paths), paths))
+        for path in range(pathCount):
+            # print("Path iteration = ", path)
+            moves = fringe.pop(0)
+            print("Moves in path {}: {}".format(path, moves))
+            for index, move in enumerate(moves):
+                fringe = successorFunc(move, fringe, bfsMap, paths, path)
+                print("Fringe after successor: ", fringe)
+                if index == 0:
+                    paths[path].append(move)
+                else:
+                    newPath = paths[path].copy()
+                    newPath[len(newPath) - 1] = move
+                    paths.append(newPath)
+                print("PATHS: ",paths)
+        iter += 1
+
 
 
 def bfsMazeSolution(bfsmap):
@@ -88,7 +109,7 @@ def bfsMazeSolution(bfsmap):
     fringe = [[start]]
     pathCount = 1
     paths = [[]]
-    successorFunc(start, fringe, bfsmap)
+    buildSolutions(start, goal, fringe, pathCount, paths, bfsmap)
 
 
 
