@@ -32,7 +32,8 @@ def successorFunc(location, fringe, bfsMap, paths, path):
         while bfsMap[copyLocation[ROW] - 1][copyLocation[COL]] != 1:
             copyLocation[ROW] = copyLocation[ROW] - 1
         if [copyLocation[ROW], copyLocation[COL]] not in paths[path]:
-            branchList.append([copyLocation[ROW], copyLocation[COL]])    #check down
+            branchList.append([copyLocation[ROW], copyLocation[COL]])
+    #check down
     copyLocation = location.copy()
     if bfsMap[copyLocation[ROW] + 1][copyLocation[COL]] != 1:
         copyLocation[ROW] += 1
@@ -78,6 +79,7 @@ def positionInitialization(bfsmap):
 
 def buildSolutions(start, goal, fringe, pathCount, paths, bfsMap):
     goalFound = False
+    successfulPath = []
     # print("FRINGE: ", fringe)
     iter = 1
     while(not goalFound and fringe):
@@ -98,10 +100,24 @@ def buildSolutions(start, goal, fringe, pathCount, paths, bfsMap):
                     newPath = paths[path].copy()
                     newPath[len(newPath) - 1] = move
                     paths.append(newPath)
+                goalFound = goalTest(move, goal)
+                if goalFound:
+                    successfulPath = paths[path + index]
+                    break
                 print("PATHS: ",paths)
+                print("End of iteration {}, Goal found = {}".format(iter, goalFound))
+
         iter += 1
+    print("OUTSIDE WHILE LOOP")
+    return successfulPath, goalFound
 
-
+def goalTest(location, goal):
+    goalFound = False
+    print("GOAL TEST LOCATION: ",location)
+    if location[ROW] == goal[ROW] and location[COL] == goal[COL]:
+        print("GOAL TEST: TRUE")
+        goalFound = True
+    return goalFound
 
 def bfsMazeSolution(bfsmap):
     start, goal = positionInitialization(bfsmap)
@@ -109,10 +125,19 @@ def bfsMazeSolution(bfsmap):
     fringe = [[start]]
     pathCount = 1
     paths = [[]]
-    buildSolutions(start, goal, fringe, pathCount, paths, bfsmap)
+    successfulPath, goalFound = buildSolutions(start, goal, fringe, pathCount, paths, bfsmap)
+
+    if goalFound:
+        print("Successful Path is: ", successfulPath)
+    else:
+        print("No path through maze found.")
+    print("\n")
 
 
 
-
-map1 = [[1, 1, 1, 1, 1, 1], [1, 0, 0, 0, "R", 1], [1, 0, 0, 0, 0, 1], [1, 0, 0, 0, 0, 1], [1, 0, 0, "D", 0, 1], [1, 1, 1, 1, 1, 1]]
-bfsMazeSolution(map1)
+# map1 = [[1, 1, 1, 1, 1, 1], [1, "D", 0, 0, "R", 1], [1, 0, 0, 0, 0, 1], [1, 0, 0, 0, 0, 1], [1, 0, 0, 0, 0, 1], [1, 1, 1, 1, 1, 1]]
+# map2 = [[1, 1, 1, 1, 1, 1], [1, 0, 0, 0, "R", 1], [1, 0, 0, 0, 0, 1], [1, 0, 0, 0, 0, 1], [1, 0, 0, 0, "D", 1], [1, 1, 1, 1, 1, 1]]
+professorsMap = [[1, 1, 1, 1, 1, 1, 1, 1, 1], [1, 0, 0, 0, 1, 0, 0, 0, 1], [1, 0, 0, 0, 1, 0, 0, 'R', 1], [1, 0, 0, 0, 0, 0, 0, 0, 1] , [1, 0, 0, 0, 0, 1, 0, 0, 1], [1, 1, 1, 0, 0, 1, 0, 0, 1], [1, 1, 1, 0, 0, 1, 1, 1, 1], [1, 1, 0, 0, 0, 0, 0, 'D', 1] , [1, 1, 1, 1, 1, 1, 1, 1, 1]]
+# bfsMazeSolution(map1)
+# bfsMazeSolution(map2)
+bfsMazeSolution(professorsMap)
