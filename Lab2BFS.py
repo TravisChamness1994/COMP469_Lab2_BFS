@@ -1,21 +1,3 @@
-# class BfsSolution:
-#     map = [[]]
-#     def __init__(self, mapFile):
-
-
-#
-# map[[]] = ""
-# def readFile(fileHandle):
-#     f = open(fileHandle)
-#     index = 0
-#     for x in f:
-#         map[index] = x
-#         index+= 1
-#
-# readFile("Map2.txt")
-
-
-# Cartesian coordinate X and Y (X, Y) accessed from array
 COL = 1
 ROW = 0
 # COORD_MANIPULATOR_INIT = 1
