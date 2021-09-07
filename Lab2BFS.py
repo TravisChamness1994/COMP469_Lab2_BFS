@@ -3,7 +3,7 @@ ROW = 0
 # COORD_MANIPULATOR_INIT = 1
 
 #Determines successor movements for the agent
-def successorFunc(location, fringe, bfsMap, paths, path):
+def successorFunc(location, fringe, bfsMap, paths, path, nonContributor):
     #Branchlist is the list of possible branches or moves that are produced in the successor function
     # based off of the current location
     branchList = []
@@ -49,6 +49,8 @@ def successorFunc(location, fringe, bfsMap, paths, path):
     #add new branch list to fringe. If it is empty, it will not effect the fringe, otherwise new possible moves are added
     if branchList:
         fringe.append(branchList)
+    else:
+        nonContributor.append(path)
     #return new fringe
     return fringe
 
@@ -78,6 +80,7 @@ def buildSolutions(start, goal, fringe, pathCount, paths, bfsMap):
     goalFound = False
     successfulPath = []
     auxFringe = []
+    nonContributor = []
     iter = 1
     while(not goalFound and fringe):
         print("ITERATION ", iter)
@@ -94,10 +97,10 @@ def buildSolutions(start, goal, fringe, pathCount, paths, bfsMap):
                 print("Moves in path {}: {}".format(path, moves))
                 for index, move in enumerate(moves):
                     if index == 0:
-                        fringe = successorFunc(move, fringe, bfsMap, paths, path)
+                        fringe = successorFunc(move, fringe, bfsMap, paths, path, nonContributor)
                         print("Fringe after successor: ", fringe)
                     else:
-                        auxFringe = successorFunc(move, auxFringe, bfsMap, paths, path)
+                        auxFringe = successorFunc(move, auxFringe, bfsMap, paths, path, nonContributor)
 
                         print("Fringe after successor: ",fringe, auxFringe)
 
@@ -114,9 +117,12 @@ def buildSolutions(start, goal, fringe, pathCount, paths, bfsMap):
                         break
 
             else: break #Acts as the end to the forloop if conditional is met
-
+        #pop paths from non_contributor vector
         print("End of iteration {}, Goal found = {}".format(iter, goalFound))
         iter += 1
+        for badPath in nonContributor:
+            paths.pop(badPath)
+        nonContributor = []
         for branches in auxFringe:
             fringe.append(branches)
         auxFringe = []
@@ -150,13 +156,13 @@ def bfsMazeSolution(bfsmap):
 # map1 = [[1, 1, 1, 1, 1, 1], [1, "D", 0, 0, "R", 1], [1, 0, 0, 0, 0, 1], [1, 0, 0, 0, 0, 1], [1, 0, 0, 0, 0, 1], [1, 1, 1, 1, 1, 1]]
 # map2 = [[1, 1, 1, 1, 1, 1], [1, 0, 0, 0, "R", 1], [1, 0, 0, 0, 0, 1], [1, 0, 0, 0, 0, 1], [1, 0, 0, 0, "D", 1], [1, 1, 1, 1, 1, 1]]
 # map3 = [[1,1,1,1,1,1,1], [1,1,1,0,0,"R",1], [1,0,0,0,0,0,1], [1,0,0,0,0,0,1], [1,0,0,0,0,0,1], [1,1,1,0,1,1,1], [1,0,0,0,0,0,1], [1,0,1,1,1,"D",1], [1,1,1,1,1,1,1]]
-map4 = [[1,1,1,1,1,1,1], [1,1,1,0,0,0,1], [1,0,0,0,0,"R",1], [1,0,0,0,0,0,1], [1,0,0,0,0,0,1], [1,1,1,0,1,1,1], [1,0,0,0,0,0,1], [1,0,1,1,1,"D",1], [1,1,1,1,1,1,1]]
+# map4 = [[1,1,1,1,1,1,1], [1,1,1,0,0,0,1], [1,0,0,0,0,"R",1], [1,0,0,0,0,0,1], [1,0,0,0,0,0,1], [1,1,1,0,1,1,1], [1,0,0,0,0,0,1], [1,0,1,1,1,"D",1], [1,1,1,1,1,1,1]]
 # map5 = [[1,1,1,1,1,1,1], [1,1,1,0,0,"R",1], [1,0,0,0,0,0,1], [1,0,0,0,0,0,1], [1,0,0,0,0,0,1], [1,1,1,0,1,1,1], [1,0,0,0,0,0,1], [1,0,1,1,"D",0,1], [1,1,1,1,1,1,1]]
+professorsMap = [[1, 1, 1, 1, 1, 1, 1, 1, 1], [1, 0, 0, 0, 1, 0, 0, 0, 1], [1, 0, 0, 0, 1, 0, 0, 'R', 1], [1, 0, 0, 0, 0, 0, 0, 0, 1] , [1, 0, 0, 0, 0, 1, 0, 0, 1], [1, 1, 1, 0, 0, 1, 0, 0, 1], [1, 1, 1, 0, 0, 1, 1, 1, 1], [1, 1, 0, 0, 0, 0, 0, 'D', 1] , [1, 1, 1, 1, 1, 1, 1, 1, 1]]
 
-# professorsMap = [[1, 1, 1, 1, 1, 1, 1, 1, 1], [1, 0, 0, 0, 1, 0, 0, 0, 1], [1, 0, 0, 0, 1, 0, 0, 'R', 1], [1, 0, 0, 0, 0, 0, 0, 0, 1] , [1, 0, 0, 0, 0, 1, 0, 0, 1], [1, 1, 1, 0, 0, 1, 0, 0, 1], [1, 1, 1, 0, 0, 1, 1, 1, 1], [1, 1, 0, 0, 0, 0, 0, 'D', 1] , [1, 1, 1, 1, 1, 1, 1, 1, 1]]
 # bfsMazeSolution(map1)
 # bfsMazeSolution(map2)
 # bfsMazeSolution(map3)
-bfsMazeSolution(map4) #Failure
+# bfsMazeSolution(map4) # [2,5], [1,5], [1,3], [6,3], [6,5], [7,5]
 # bfsMazeSolution(map5) #Failure
-# bfsMazeSolution(professorsMap) #[[2, 7], [2, 5], [3, 5], [3, 1], [4, 1], [4, 4], [7, 4], [7. 7]]
+bfsMazeSolution(professorsMap) #[[2, 7], [2, 5], [3, 5], [3, 1], [4, 1], [4, 4], [7, 4], [7. 7]]
