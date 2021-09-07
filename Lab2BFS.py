@@ -84,24 +84,29 @@ def buildSolutions(start, goal, fringe, pathCount, paths, bfsMap):
         print("FRINGE at first loop",fringe)
         print("Pathcount {} Paths {}".format(len(paths), paths))
         for path in range(pathCount):
-            # print("Path iteration = ", path)
-            moves = fringe.pop(0)
-            print("Moves in path {}: {}".format(path, moves))
-            for index, move in enumerate(moves):
-                fringe = successorFunc(move, fringe, bfsMap, paths, path)
-                print("Fringe after successor: ", fringe)
-                if index == 0:
-                    paths[path].append(move)
-                else:
-                    newPath = paths[path].copy()
-                    newPath[len(newPath) - 1] = move
-                    paths.append(newPath)
-                goalFound = goalTest(move, goal)
-                if goalFound:
-                    successfulPath = paths[path + index]
-                    break
-                print("PATHS: ",paths)
-                print("End of iteration {}, Goal found = {}".format(iter, goalFound))
+            # Note on Condtional in this style: Not good, this should be replaced with a while loop. The forloop can be entered
+            # regardless of goalFound being True because it is not a conditional of the looping structure. However, it will not run its course,
+            # but none the less should not be entered at all.
+            if not goalFound: #Conditional added to simulate a complex for loop conditional
+                # print("Path iteration = ", path)
+                moves = fringe.pop(0)
+                print("Moves in path {}: {}".format(path, moves))
+                for index, move in enumerate(moves):
+                    fringe = successorFunc(move, fringe, bfsMap, paths, path)
+                    print("Fringe after successor: ", fringe)
+                    if index == 0:
+                        paths[path].append(move)
+                    else:
+                        newPath = paths[path].copy()
+                        newPath[len(newPath) - 1] = move
+                        paths.append(newPath)
+                    goalFound = goalTest(move, goal)
+                    if goalFound:
+                        successfulPath = paths[path + index]
+                        break
+                    print("PATHS: ",paths)
+                    print("End of iteration {}, Goal found = {}".format(iter, goalFound))
+            else: break #Acts as the end to the forloop if conditional is met
 
         iter += 1
     print("OUTSIDE WHILE LOOP")
@@ -133,7 +138,9 @@ def bfsMazeSolution(bfsmap):
 
 # map1 = [[1, 1, 1, 1, 1, 1], [1, "D", 0, 0, "R", 1], [1, 0, 0, 0, 0, 1], [1, 0, 0, 0, 0, 1], [1, 0, 0, 0, 0, 1], [1, 1, 1, 1, 1, 1]]
 # map2 = [[1, 1, 1, 1, 1, 1], [1, 0, 0, 0, "R", 1], [1, 0, 0, 0, 0, 1], [1, 0, 0, 0, 0, 1], [1, 0, 0, 0, "D", 1], [1, 1, 1, 1, 1, 1]]
+# map3 = [[1,1,1,1,1,1,1], [1,1,1,0,0,"R",1], [1,0,0,0,0,0,1], [1,0,0,0,0,0,1], [1,0,0,0,0,0,1], [1,1,1,0,1,1,1], [1,0,0,0,0,0,1], [1,0,1,1,1,"D",1], [1,1,1,1,1,1,1]]
 professorsMap = [[1, 1, 1, 1, 1, 1, 1, 1, 1], [1, 0, 0, 0, 1, 0, 0, 0, 1], [1, 0, 0, 0, 1, 0, 0, 'R', 1], [1, 0, 0, 0, 0, 0, 0, 0, 1] , [1, 0, 0, 0, 0, 1, 0, 0, 1], [1, 1, 1, 0, 0, 1, 0, 0, 1], [1, 1, 1, 0, 0, 1, 1, 1, 1], [1, 1, 0, 0, 0, 0, 0, 'D', 1] , [1, 1, 1, 1, 1, 1, 1, 1, 1]]
 # bfsMazeSolution(map1)
 # bfsMazeSolution(map2)
+# bfsMazeSolution(map3)
 bfsMazeSolution(professorsMap)
