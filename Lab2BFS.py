@@ -20,7 +20,7 @@ def successorFunc(location, fringe, bfsMap, paths, path):
             copyLocation[ROW] = copyLocation[ROW] - 1
         #Once we find a wall, if the location at that point is not already visisted, add it to the branch list
         # NOTE: Branch list is the possible successor moves
-        if [copyLocation[ROW], copyLocation[COL]] not in paths[path]:
+        if copyLocation not in paths[path]:
             branchList.append([copyLocation[ROW], copyLocation[COL]])
     #check down
     copyLocation = location.copy()
@@ -28,7 +28,7 @@ def successorFunc(location, fringe, bfsMap, paths, path):
         copyLocation[ROW] += 1
         while bfsMap[copyLocation[ROW] + 1][copyLocation[COL]] != 1:
             copyLocation[ROW] = copyLocation[ROW] + 1
-        if [copyLocation[ROW], copyLocation[COL]] not in paths[path]:
+        if copyLocation not in paths[path]:
             branchList.append([copyLocation[ROW], copyLocation[COL]])
     #check right
     copyLocation = location.copy()
@@ -36,7 +36,7 @@ def successorFunc(location, fringe, bfsMap, paths, path):
         copyLocation[COL] += 1
         while bfsMap[copyLocation[ROW]][copyLocation[COL] + 1] != 1:
             copyLocation[COL] += 1
-        if [copyLocation[ROW], copyLocation[COL]] not in paths[path]:
+        if copyLocation not in paths[path]:
             branchList.append([copyLocation[ROW], copyLocation[COL]])
     #check left
     copyLocation = location.copy()
@@ -44,7 +44,7 @@ def successorFunc(location, fringe, bfsMap, paths, path):
         copyLocation[COL] = copyLocation[COL] - 1
         while bfsMap[copyLocation[ROW]][copyLocation[COL] - 1] != 1:
             copyLocation[COL] = copyLocation[COL] - 1
-        if [copyLocation[ROW], copyLocation[COL]] not in paths[path]:
+        if copyLocation not in paths[path]:
             branchList.append([copyLocation[ROW], copyLocation[COL]])
     #add new branch list to fringe. If it is empty, it will not effect the fringe, otherwise new possible moves are added
     if branchList:
@@ -77,6 +77,7 @@ def positionInitialization(bfsmap):
 def buildSolutions(start, goal, fringe, pathCount, paths, bfsMap):
     goalFound = False
     successfulPath = []
+    auxFringe = []
     iter = 1
     while(not goalFound and fringe):
         print("ITERATION ", iter)
@@ -92,8 +93,14 @@ def buildSolutions(start, goal, fringe, pathCount, paths, bfsMap):
                 moves = fringe.pop(0)
                 print("Moves in path {}: {}".format(path, moves))
                 for index, move in enumerate(moves):
-                    fringe = successorFunc(move, fringe, bfsMap, paths, path)
-                    print("Fringe after successor: ", fringe)
+                    if index == 0:
+                        fringe = successorFunc(move, fringe, bfsMap, paths, path)
+                        print("Fringe after successor: ", fringe)
+                    else:
+                        auxFringe = successorFunc(move, auxFringe, bfsMap, paths, path)
+
+                        print("Fringe after successor: ",fringe, auxFringe)
+
                     if index == 0:
                         paths[path].append(move)
                     else:
@@ -101,14 +108,18 @@ def buildSolutions(start, goal, fringe, pathCount, paths, bfsMap):
                         newPath[len(newPath) - 1] = move
                         paths.append(newPath)
                     goalFound = goalTest(move, goal)
+                    print("PATHS: ",paths)
                     if goalFound:
                         successfulPath = paths[path + index]
                         break
-                    print("PATHS: ",paths)
-                    print("End of iteration {}, Goal found = {}".format(iter, goalFound))
+
             else: break #Acts as the end to the forloop if conditional is met
 
+        print("End of iteration {}, Goal found = {}".format(iter, goalFound))
         iter += 1
+        for branches in auxFringe:
+            fringe.append(branches)
+        auxFringe = []
     print("OUTSIDE WHILE LOOP")
     return successfulPath, goalFound
 
@@ -139,8 +150,13 @@ def bfsMazeSolution(bfsmap):
 # map1 = [[1, 1, 1, 1, 1, 1], [1, "D", 0, 0, "R", 1], [1, 0, 0, 0, 0, 1], [1, 0, 0, 0, 0, 1], [1, 0, 0, 0, 0, 1], [1, 1, 1, 1, 1, 1]]
 # map2 = [[1, 1, 1, 1, 1, 1], [1, 0, 0, 0, "R", 1], [1, 0, 0, 0, 0, 1], [1, 0, 0, 0, 0, 1], [1, 0, 0, 0, "D", 1], [1, 1, 1, 1, 1, 1]]
 # map3 = [[1,1,1,1,1,1,1], [1,1,1,0,0,"R",1], [1,0,0,0,0,0,1], [1,0,0,0,0,0,1], [1,0,0,0,0,0,1], [1,1,1,0,1,1,1], [1,0,0,0,0,0,1], [1,0,1,1,1,"D",1], [1,1,1,1,1,1,1]]
-professorsMap = [[1, 1, 1, 1, 1, 1, 1, 1, 1], [1, 0, 0, 0, 1, 0, 0, 0, 1], [1, 0, 0, 0, 1, 0, 0, 'R', 1], [1, 0, 0, 0, 0, 0, 0, 0, 1] , [1, 0, 0, 0, 0, 1, 0, 0, 1], [1, 1, 1, 0, 0, 1, 0, 0, 1], [1, 1, 1, 0, 0, 1, 1, 1, 1], [1, 1, 0, 0, 0, 0, 0, 'D', 1] , [1, 1, 1, 1, 1, 1, 1, 1, 1]]
+map4 = [[1,1,1,1,1,1,1], [1,1,1,0,0,0,1], [1,0,0,0,0,"R",1], [1,0,0,0,0,0,1], [1,0,0,0,0,0,1], [1,1,1,0,1,1,1], [1,0,0,0,0,0,1], [1,0,1,1,1,"D",1], [1,1,1,1,1,1,1]]
+# map5 = [[1,1,1,1,1,1,1], [1,1,1,0,0,"R",1], [1,0,0,0,0,0,1], [1,0,0,0,0,0,1], [1,0,0,0,0,0,1], [1,1,1,0,1,1,1], [1,0,0,0,0,0,1], [1,0,1,1,"D",0,1], [1,1,1,1,1,1,1]]
+
+# professorsMap = [[1, 1, 1, 1, 1, 1, 1, 1, 1], [1, 0, 0, 0, 1, 0, 0, 0, 1], [1, 0, 0, 0, 1, 0, 0, 'R', 1], [1, 0, 0, 0, 0, 0, 0, 0, 1] , [1, 0, 0, 0, 0, 1, 0, 0, 1], [1, 1, 1, 0, 0, 1, 0, 0, 1], [1, 1, 1, 0, 0, 1, 1, 1, 1], [1, 1, 0, 0, 0, 0, 0, 'D', 1] , [1, 1, 1, 1, 1, 1, 1, 1, 1]]
 # bfsMazeSolution(map1)
 # bfsMazeSolution(map2)
 # bfsMazeSolution(map3)
-bfsMazeSolution(professorsMap)
+bfsMazeSolution(map4) #Failure
+# bfsMazeSolution(map5) #Failure
+# bfsMazeSolution(professorsMap) #[[2, 7], [2, 5], [3, 5], [3, 1], [4, 1], [4, 4], [7, 4], [7. 7]]
