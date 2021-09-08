@@ -117,7 +117,7 @@ def buildSolutions(goal, fringe, pathCount, paths, bfsMap):
 
 def goalTest(location, goal):
     goalFound = False
-    if location[ROW] == goal[ROW] and location[COL] == goal[COL]:
+    if location == goal:
         goalFound = True
     return goalFound
 
