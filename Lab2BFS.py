@@ -76,7 +76,7 @@ def positionInitialization(bfsmap):
 # As a new current location, the successor function will be run on that location, and the fringe will be updated.
 # Once done, we add the location to the associated path (this is where the error probably occurs. Need a test where a path closes)
 # Then test the location against the goal.
-def buildSolutions(start, goal, fringe, pathCount, paths, bfsMap):
+def buildSolutions(goal, fringe, pathCount, paths, bfsMap):
     goalFound = False
     successfulPath = []
     auxFringe = []
@@ -98,18 +98,15 @@ def buildSolutions(start, goal, fringe, pathCount, paths, bfsMap):
                 for index, move in enumerate(moves):
                     if index == 0:
                         fringe = successorFunc(move, fringe, bfsMap, paths, path, nonContributor)
+                        paths[path].append(move)
                         print("Fringe after successor: ", fringe)
                     else:
                         auxFringe = successorFunc(move, auxFringe, bfsMap, paths, path, nonContributor)
-
-                        print("Fringe after successor: ",fringe, auxFringe)
-
-                    if index == 0:
-                        paths[path].append(move)
-                    else:
                         newPath = paths[path].copy()
                         newPath[len(newPath) - 1] = move
                         paths.append(newPath)
+                        print("Fringe after successor: ",fringe, auxFringe)
+
                     goalFound = goalTest(move, goal)
                     print("PATHS: ",paths)
                     if goalFound:
@@ -117,15 +114,14 @@ def buildSolutions(start, goal, fringe, pathCount, paths, bfsMap):
                         break
 
             else: break #Acts as the end to the forloop if conditional is met
-        #pop paths from non_contributor vector
         print("End of iteration {}, Goal found = {}".format(iter, goalFound))
-        iter += 1
         for badPath in nonContributor:
             paths.pop(badPath)
         nonContributor = []
         for branches in auxFringe:
             fringe.append(branches)
         auxFringe = []
+        iter += 1
     print("OUTSIDE WHILE LOOP")
     return successfulPath, goalFound
 
@@ -143,10 +139,10 @@ def bfsMazeSolution(bfsmap):
     fringe = [[start]]
     pathCount = 1
     paths = [[]]
-    successfulPath, goalFound = buildSolutions(start, goal, fringe, pathCount, paths, bfsmap)
-
+    successfulPath, goalFound = buildSolutions(goal, fringe, pathCount, paths, bfsmap)
+    cost = len(successfulPath)
     if goalFound:
-        print("Successful Path is: ", successfulPath)
+        print("Successful Path is: {} with a cost of {}".format( successfulPath, cost))
     else:
         print("No path through maze found.")
     print("\n")
