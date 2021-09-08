@@ -1,3 +1,7 @@
+#Creators: Juan Zarate Hernandez & Travis Chamness
+#Date: Sept 8, 2021
+#Lab2: Maze Solution using BFS
+
 COL = 1
 ROW = 0
 
@@ -83,11 +87,11 @@ def buildSolutions(goal, fringe, pathCount, paths, bfsMap):
     while(not goalFound and fringe):
         pathCount = len(paths)
         for path in range(pathCount):
+            #Conditional if-else added to simulate a complex for loop conditional
             # Note on Condtional in this style: Not good, this should be replaced with a while loop. The forloop can be entered
             # regardless of goalFound being True because it is not a conditional of the looping structure. However, it will not run its course,
             # but none the less should not be entered at all.
-            if not goalFound: #Conditional added to simulate a complex for loop conditional
-                # print("Path iteration = ", path)
+            if not goalFound:
                 moves = fringe.pop(0)
                 for index, move in enumerate(moves):
                     if index == 0:
@@ -103,8 +107,8 @@ def buildSolutions(goal, fringe, pathCount, paths, bfsMap):
                     if goalFound:
                         successfulPath = paths[path + index]
                         break
-
-            else: break #Acts as the end to the forloop if conditional is met
+            # 'else: break' acts as the end to the forloop if conditional is met. Understood to be not a good practice.
+            else: break
         for badPath in nonContributor:
             paths.pop(badPath)
         for branches in auxFringe:
@@ -134,19 +138,3 @@ def bfsMazeSolution(bfsmap):
     else:
         print("No path through maze found.")
     print("\n")
-
-
-
-map1 = [[1, 1, 1, 1, 1, 1], [1, "D", 0, 0, "R", 1], [1, 0, 0, 0, 0, 1], [1, 0, 0, 0, 0, 1], [1, 0, 0, 0, 0, 1], [1, 1, 1, 1, 1, 1]]
-map2 = [[1, 1, 1, 1, 1, 1], [1, 0, 0, 0, "R", 1], [1, 0, 0, 0, 0, 1], [1, 0, 0, 0, 0, 1], [1, 0, 0, 0, "D", 1], [1, 1, 1, 1, 1, 1]]
-map3 = [[1,1,1,1,1,1,1], [1,1,1,0,0,"R",1], [1,0,0,0,0,0,1], [1,0,0,0,0,0,1], [1,0,0,0,0,0,1], [1,1,1,0,1,1,1], [1,0,0,0,0,0,1], [1,0,1,1,1,"D",1], [1,1,1,1,1,1,1]]
-map4 = [[1,1,1,1,1,1,1], [1,1,1,0,0,0,1], [1,0,0,0,0,"R",1], [1,0,0,0,0,0,1], [1,0,0,0,0,0,1], [1,1,1,0,1,1,1], [1,0,0,0,0,0,1], [1,0,1,1,1,"D",1], [1,1,1,1,1,1,1]]
-map5 = [[1,1,1,1,1,1,1], [1,1,1,0,0,"R",1], [1,0,0,0,0,0,1], [1,0,0,0,0,0,1], [1,0,0,0,0,0,1], [1,1,1,0,1,1,1], [1,0,0,0,0,0,1], [1,0,1,1,"D",0,1], [1,1,1,1,1,1,1]]
-professorsMap = [[1, 1, 1, 1, 1, 1, 1, 1, 1], [1, 0, 0, 0, 1, 0, 0, 0, 1], [1, 0, 0, 0, 1, 0, 0, 'R', 1], [1, 0, 0, 0, 0, 0, 0, 0, 1] , [1, 0, 0, 0, 0, 1, 0, 0, 1], [1, 1, 1, 0, 0, 1, 0, 0, 1], [1, 1, 1, 0, 0, 1, 1, 1, 1], [1, 1, 0, 0, 0, 0, 0, 'D', 1] , [1, 1, 1, 1, 1, 1, 1, 1, 1]]
-
-bfsMazeSolution(map1)
-bfsMazeSolution(map2)
-bfsMazeSolution(map3)
-bfsMazeSolution(map4) # [2,5], [1,5], [1,3], [6,3], [6,5], [7,5]
-bfsMazeSolution(map5)
-bfsMazeSolution(professorsMap) #[[2, 7], [2, 5], [3, 5], [3, 1], [4, 1], [4, 4], [7, 4], [7. 7]]
