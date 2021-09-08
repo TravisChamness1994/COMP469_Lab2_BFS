@@ -1,6 +1,5 @@
 COL = 1
 ROW = 0
-# COORD_MANIPULATOR_INIT = 1
 
 #Determines successor movements for the agent
 def successorFunc(location, fringe, bfsMap, paths, path, nonContributor):
@@ -10,7 +9,6 @@ def successorFunc(location, fringe, bfsMap, paths, path, nonContributor):
     #check up
     #Checking direction code pieces operate by first getting a deep copy of the original location.
     # by subtracting or adding to the column or row, it manipulates the section of the map matrix being looked at.
-    print("Location: ", location)
     copyLocation = location.copy()
     #If the immediate dierection is not a wall
     if bfsMap[copyLocation[ROW] - 1][(copyLocation[COL])] != 1:
@@ -83,10 +81,7 @@ def buildSolutions(goal, fringe, pathCount, paths, bfsMap):
     nonContributor = []
     iter = 1
     while(not goalFound and fringe):
-        print("ITERATION ", iter)
         pathCount = len(paths)
-        print("FRINGE at first loop",fringe)
-        print("Pathcount {} Paths {}".format(len(paths), paths))
         for path in range(pathCount):
             # Note on Condtional in this style: Not good, this should be replaced with a while loop. The forloop can be entered
             # regardless of goalFound being True because it is not a conditional of the looping structure. However, it will not run its course,
@@ -94,42 +89,35 @@ def buildSolutions(goal, fringe, pathCount, paths, bfsMap):
             if not goalFound: #Conditional added to simulate a complex for loop conditional
                 # print("Path iteration = ", path)
                 moves = fringe.pop(0)
-                print("Moves in path {}: {}".format(path, moves))
                 for index, move in enumerate(moves):
                     if index == 0:
                         fringe = successorFunc(move, fringe, bfsMap, paths, path, nonContributor)
                         paths[path].append(move)
-                        print("Fringe after successor: ", fringe)
                     else:
                         auxFringe = successorFunc(move, auxFringe, bfsMap, paths, path, nonContributor)
                         newPath = paths[path].copy()
                         newPath[len(newPath) - 1] = move
                         paths.append(newPath)
-                        print("Fringe after successor: ",fringe, auxFringe)
 
                     goalFound = goalTest(move, goal)
-                    print("PATHS: ",paths)
                     if goalFound:
                         successfulPath = paths[path + index]
                         break
 
             else: break #Acts as the end to the forloop if conditional is met
-        print("End of iteration {}, Goal found = {}".format(iter, goalFound))
         for badPath in nonContributor:
             paths.pop(badPath)
-        nonContributor = []
         for branches in auxFringe:
             fringe.append(branches)
+
+        nonContributor = []
         auxFringe = []
         iter += 1
-    print("OUTSIDE WHILE LOOP")
     return successfulPath, goalFound
 
 def goalTest(location, goal):
     goalFound = False
-    print("GOAL TEST LOCATION: ",location)
     if location[ROW] == goal[ROW] and location[COL] == goal[COL]:
-        print("GOAL TEST: TRUE")
         goalFound = True
     return goalFound
 
@@ -149,16 +137,16 @@ def bfsMazeSolution(bfsmap):
 
 
 
-# map1 = [[1, 1, 1, 1, 1, 1], [1, "D", 0, 0, "R", 1], [1, 0, 0, 0, 0, 1], [1, 0, 0, 0, 0, 1], [1, 0, 0, 0, 0, 1], [1, 1, 1, 1, 1, 1]]
-# map2 = [[1, 1, 1, 1, 1, 1], [1, 0, 0, 0, "R", 1], [1, 0, 0, 0, 0, 1], [1, 0, 0, 0, 0, 1], [1, 0, 0, 0, "D", 1], [1, 1, 1, 1, 1, 1]]
-# map3 = [[1,1,1,1,1,1,1], [1,1,1,0,0,"R",1], [1,0,0,0,0,0,1], [1,0,0,0,0,0,1], [1,0,0,0,0,0,1], [1,1,1,0,1,1,1], [1,0,0,0,0,0,1], [1,0,1,1,1,"D",1], [1,1,1,1,1,1,1]]
-# map4 = [[1,1,1,1,1,1,1], [1,1,1,0,0,0,1], [1,0,0,0,0,"R",1], [1,0,0,0,0,0,1], [1,0,0,0,0,0,1], [1,1,1,0,1,1,1], [1,0,0,0,0,0,1], [1,0,1,1,1,"D",1], [1,1,1,1,1,1,1]]
-# map5 = [[1,1,1,1,1,1,1], [1,1,1,0,0,"R",1], [1,0,0,0,0,0,1], [1,0,0,0,0,0,1], [1,0,0,0,0,0,1], [1,1,1,0,1,1,1], [1,0,0,0,0,0,1], [1,0,1,1,"D",0,1], [1,1,1,1,1,1,1]]
+map1 = [[1, 1, 1, 1, 1, 1], [1, "D", 0, 0, "R", 1], [1, 0, 0, 0, 0, 1], [1, 0, 0, 0, 0, 1], [1, 0, 0, 0, 0, 1], [1, 1, 1, 1, 1, 1]]
+map2 = [[1, 1, 1, 1, 1, 1], [1, 0, 0, 0, "R", 1], [1, 0, 0, 0, 0, 1], [1, 0, 0, 0, 0, 1], [1, 0, 0, 0, "D", 1], [1, 1, 1, 1, 1, 1]]
+map3 = [[1,1,1,1,1,1,1], [1,1,1,0,0,"R",1], [1,0,0,0,0,0,1], [1,0,0,0,0,0,1], [1,0,0,0,0,0,1], [1,1,1,0,1,1,1], [1,0,0,0,0,0,1], [1,0,1,1,1,"D",1], [1,1,1,1,1,1,1]]
+map4 = [[1,1,1,1,1,1,1], [1,1,1,0,0,0,1], [1,0,0,0,0,"R",1], [1,0,0,0,0,0,1], [1,0,0,0,0,0,1], [1,1,1,0,1,1,1], [1,0,0,0,0,0,1], [1,0,1,1,1,"D",1], [1,1,1,1,1,1,1]]
+map5 = [[1,1,1,1,1,1,1], [1,1,1,0,0,"R",1], [1,0,0,0,0,0,1], [1,0,0,0,0,0,1], [1,0,0,0,0,0,1], [1,1,1,0,1,1,1], [1,0,0,0,0,0,1], [1,0,1,1,"D",0,1], [1,1,1,1,1,1,1]]
 professorsMap = [[1, 1, 1, 1, 1, 1, 1, 1, 1], [1, 0, 0, 0, 1, 0, 0, 0, 1], [1, 0, 0, 0, 1, 0, 0, 'R', 1], [1, 0, 0, 0, 0, 0, 0, 0, 1] , [1, 0, 0, 0, 0, 1, 0, 0, 1], [1, 1, 1, 0, 0, 1, 0, 0, 1], [1, 1, 1, 0, 0, 1, 1, 1, 1], [1, 1, 0, 0, 0, 0, 0, 'D', 1] , [1, 1, 1, 1, 1, 1, 1, 1, 1]]
 
-# bfsMazeSolution(map1)
-# bfsMazeSolution(map2)
-# bfsMazeSolution(map3)
-# bfsMazeSolution(map4) # [2,5], [1,5], [1,3], [6,3], [6,5], [7,5]
-# bfsMazeSolution(map5) #Failure
+bfsMazeSolution(map1)
+bfsMazeSolution(map2)
+bfsMazeSolution(map3)
+bfsMazeSolution(map4) # [2,5], [1,5], [1,3], [6,3], [6,5], [7,5]
+bfsMazeSolution(map5)
 bfsMazeSolution(professorsMap) #[[2, 7], [2, 5], [3, 5], [3, 1], [4, 1], [4, 4], [7, 4], [7. 7]]
